@@ -37,22 +37,18 @@ sudo install -Dm755 target/release/waygreet /usr/bin/waygreet
 sudo useradd -r -s /sbin/nologin -d /var/lib/greetd greetd
 ```
 
-2. Mask portal services (prevents 25+ second startup delays):
-```bash
-sudo machinectl shell greetd@ /bin/bash -c "systemctl --user mask xdg-desktop-portal.service xdg-desktop-portal-gtk.service xdg-desktop-portal-gnome.service gvfs-daemon.service"
-```
-
-3. Configure greetd (`/etc/greetd/config.toml`):
+2. Configure greetd (`/etc/greetd/config.toml`):
 ```toml
 [terminal]
 vt = 1
 
 [default_session]
-command = "cage -s -- waygreet"
+# dbus-run-session creates a fresh D-Bus session, preventing portal activation delays
+command = "dbus-run-session cage -s -- waygreet"
 user = "greetd"
 ```
 
-4. Optional: Create waygreet config (`/etc/greetd/waygreet.toml`):
+3. Optional: Create waygreet config (`/etc/greetd/waygreet.toml`):
 ```toml
 [accessibility]
 start_orca = true
@@ -99,7 +95,7 @@ Options:
 Waygreet is designed for users who rely on screen readers:
 
 1. **Orca starts automatically** after the UI loads (required for AT-SPI bus)
-2. **PipeWire audio** runs via systemd user services (requires lingering)
+2. **PipeWire audio** runs via systemd user services
 3. **AT-SPI environment** is configured for accessibility
 4. **High contrast mode** available in config
 5. **Font scaling** configurable
@@ -126,9 +122,9 @@ See `data/waygreet.css` for the default theme and `data/waygreet-high-contrast.c
 
 ### Greeter takes a long time to appear
 
-Portal services are likely trying to start and timing out. Mask them:
-```bash
-sudo machinectl shell greetd@ /bin/bash -c "systemctl --user mask xdg-desktop-portal.service xdg-desktop-portal-gtk.service xdg-desktop-portal-gnome.service"
+Portal services are likely trying to start and timing out. Ensure you're using `dbus-run-session` in your greetd config:
+```toml
+command = "dbus-run-session cage -s -- waygreet"
 ```
 
 ### Orca not speaking

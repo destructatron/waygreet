@@ -75,10 +75,13 @@ fn setup_accessibility_environment() {
 async fn main() -> Result<()> {
     let args = Args::parse();
 
-    // Disable services that aren't needed for a greeter and cause delays
+    // Disable portal services that aren't needed for a greeter.
+    // Without these, GTK tries to connect to xdg-desktop-portal via D-Bus,
+    // which times out after 25+ seconds when the services aren't available.
+    std::env::set_var("GDK_DEBUG", "no-portals"); // Disable all portal usage at GDK level
     std::env::set_var("GTK_USE_PORTAL", "0"); // Disable portal file dialogs
     std::env::set_var("GIO_USE_VFS", "local"); // Disable gvfs, use local VFS only
-    std::env::set_var("GSETTINGS_BACKEND", "memory"); // Don't need dconf
+    std::env::set_var("GSETTINGS_BACKEND", "memory"); // Use in-memory settings, skip dconf
 
     // Set up logging first
     setup_logging(&args.log_level)?;

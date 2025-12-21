@@ -100,14 +100,11 @@ The greetd protocol uses JSON messages with a u32 length prefix. The `greetd_ipc
 
 ### Accessibility Setup Requirements
 
-For Orca and audio to work in the greeter, the greeter user needs:
-
-1. **Portal services masked** - These cause 25+ second delays and aren't needed:
-   ```bash
-   sudo machinectl shell greetd@ /bin/bash -c "systemctl --user mask xdg-desktop-portal.service xdg-desktop-portal-gtk.service xdg-desktop-portal-gnome.service gvfs-daemon.service"
-   ```
-
-Note: User lingering and manual service enablement are NOT required. The greetd PAM session automatically creates a systemd user instance for the greeter user, and PipeWire services start automatically.
+Orca and audio work out-of-the-box with no special configuration required:
+- Portal services are disabled via environment variables (`GDK_DEBUG=no-portals`, etc.)
+- User lingering and manual service enablement are NOT required
+- The greetd PAM session automatically creates a systemd user instance for the greeter user
+- PipeWire services start automatically when enabled
 
 ### Orca Startup Timing
 
@@ -130,9 +127,32 @@ The systemd orca.service doesn't have these set correctly.
 
 ### Portal Services and Startup Delays
 
-GTK tries to activate `xdg-desktop-portal` on startup, which in turn tries to activate various backends (gnome, gtk). These fail for the greeter user and cause 25+ second delays. Prevent this with:
-- Environment: `GTK_USE_PORTAL=0`, `GIO_USE_VFS=local`, `GSETTINGS_BACKEND=memory`
-- Mask the services for the greeter user
+GTK tries to activate `xdg-desktop-portal` on startup via D-Bus, which times out after 25+ seconds when unavailable. This is a known issue with GTK greeters running in cage (documented in cage issue #169).
+
+**Solution: Use `dbus-run-session` wrapper in greetd config:**
+```toml
+command = "dbus-run-session cage -s -- waygreet"
+```
+
+This creates a fresh D-Bus session for waygreet where our portal prevention measures take effect:
+
+1. **Process environment** (set in `main.rs`):
+   - `GDK_DEBUG=no-portals` - Disables all portal usage at the GDK level
+   - `GTK_USE_PORTAL=0` - Disables portal file dialogs
+   - `GIO_USE_VFS=local` - Disables gvfs mount discovery
+   - `GSETTINGS_BACKEND=memory` - Uses in-memory settings instead of dconf
+
+2. **D-Bus service file overrides** (created in `session_env.rs`):
+   - Creates fake `.service` files in `$XDG_RUNTIME_DIR/waygreet/dbus-1/services/`
+   - Each override has `Exec=/bin/false` which makes activation fail immediately
+   - Prepends this directory to `XDG_DATA_DIRS` so D-Bus finds overrides first
+   - This prevents the 25-second timeout by making activation fail fast
+
+3. **D-Bus activation environment** (set in `session_env.rs`):
+   - Uses `dbus-update-activation-environment --systemd` to propagate settings
+   - Unsets `XDG_CURRENT_DESKTOP` which triggers portal backend lookups
+
+No external configuration (like masking services) is required.
 
 ### Audio for Orca
 

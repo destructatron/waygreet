@@ -7,9 +7,10 @@ vt = 1
 
 [default_session]
 # Command to run when starting the greeter
-# cage provides a minimal Wayland compositor
-# -s enables VT switching (important!)
-command = "cage -s -- waygreet"
+# - dbus-run-session creates a fresh D-Bus session, preventing portal activation delays
+# - cage provides a minimal Wayland compositor
+# - -s enables VT switching (important!)
+command = "dbus-run-session cage -s -- waygreet"
 
 # User to run the greeter as
 # Create this user: useradd -r -s /sbin/nologin greeter
