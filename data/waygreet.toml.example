@@ -1,0 +1,68 @@
+# Waygreet Configuration
+# Copy to /etc/greetd/waygreet.toml
+
+[accessibility]
+# Start Orca screen reader by default
+start_orca = true
+# Use systemd for Orca if available
+prefer_systemd = true
+# Path to orca executable
+orca_path = "/usr/bin/orca"
+# Additional Orca arguments
+orca_args = ["--replace"]
+# Enable audio (PipeWire)
+enable_audio = true
+# AT-SPI environment setup
+setup_atspi = true
+
+[sessions]
+# Additional session directories (array of paths)
+extra_dirs = []
+# X11 session wrapper command
+x11_wrapper = ["startx"]
+# Default session name (matches desktop entry Name field)
+default_session = ""
+# Show X11 sessions
+show_x11 = true
+# Show Wayland sessions
+show_wayland = true
+
+[appearance]
+# GTK theme name (empty for system default)
+theme = ""
+# Enable dark mode
+dark_mode = true
+# Custom CSS file path
+css_file = ""
+# High contrast mode (overrides theme)
+high_contrast = false
+# Font scale factor (1.0 = normal, 1.5 = 150%)
+font_scale = 1.0
+
+[behavior]
+# Remember last user
+remember_user = true
+# Remember last session
+remember_session = true
+# State file path
+state_file = "/var/cache/waygreet/state.toml"
+# Initial focus field ("username" or "password")
+initial_focus = "username"
+# Show clock
+show_clock = true
+# Clock format (strftime)
+clock_format = "%H:%M"
+
+[commands]
+# Reboot command
+reboot = ["systemctl", "reboot"]
+# Shutdown command
+shutdown = ["systemctl", "poweroff"]
+# Enable power menu
+enable_power_menu = true
+
+[environment]
+# Additional environment variables for sessions
+# Example:
+# [environment.vars]
+# MY_VAR = "value"

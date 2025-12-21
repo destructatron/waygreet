@@ -1,0 +1,23 @@
+[Unit]
+Description=Orca Screen Reader for Waygreet Greeter
+Documentation=https://orca.gnome.org/
+PartOf=graphical-session.target
+Wants=at-spi-dbus-bus.service
+After=at-spi-dbus-bus.service pipewire.service
+
+[Service]
+Type=notify-reload
+ExecStart=/usr/bin/orca --replace
+Restart=on-failure
+RestartSec=1
+WatchdogSec=30
+Slice=session.slice
+
+# Environment for accessibility
+Environment=GTK_MODULES=gail:atk-bridge
+Environment=GNOME_ACCESSIBILITY=1
+Environment=QT_ACCESSIBILITY=1
+Environment=QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1
+
+[Install]
+WantedBy=graphical-session.target

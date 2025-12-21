@@ -1,0 +1,22 @@
+# Example greetd configuration for waygreet
+# Copy to /etc/greetd/config.toml
+
+[terminal]
+# The VT to run on. "next" will use the next available VT.
+vt = 1
+
+[default_session]
+# Command to run when starting the greeter
+# cage provides a minimal Wayland compositor
+# -s enables VT switching (important!)
+command = "cage -s -- waygreet"
+
+# User to run the greeter as
+# Create this user: useradd -r -s /sbin/nologin greeter
+user = "greeter"
+
+# Optional: Initial session for auto-login
+# Uncomment and configure to enable auto-login
+# [initial_session]
+# command = "sway"
+# user = "username"
