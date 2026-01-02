@@ -111,7 +111,7 @@ impl SimpleComponent for PowerMenu {
                     update_property: &[gtk4::accessible::Property::Label("Reboot system")],
 
                     connect_clicked[sender] => move |_| {
-                        sender.input(PowerMenuInput::ShowConfirmation(PowerAction::Reboot));
+                        sender.input(PowerMenuInput::Reboot);
                     },
                 },
 
@@ -124,7 +124,7 @@ impl SimpleComponent for PowerMenu {
                     update_property: &[gtk4::accessible::Property::Label("Shutdown system")],
 
                     connect_clicked[sender] => move |_| {
-                        sender.input(PowerMenuInput::ShowConfirmation(PowerAction::Shutdown));
+                        sender.input(PowerMenuInput::Shutdown);
                     },
                 },
             },

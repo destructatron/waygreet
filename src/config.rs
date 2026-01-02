@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::path::Path;
 
 /// Main configuration structure
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Config {
     pub accessibility: AccessibilityConfig,
@@ -14,19 +14,6 @@ pub struct Config {
     pub behavior: BehaviorConfig,
     pub commands: CommandsConfig,
     pub environment: EnvironmentConfig,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            accessibility: AccessibilityConfig::default(),
-            sessions: SessionsConfig::default(),
-            appearance: AppearanceConfig::default(),
-            behavior: BehaviorConfig::default(),
-            commands: CommandsConfig::default(),
-            environment: EnvironmentConfig::default(),
-        }
-    }
 }
 
 /// Accessibility configuration
@@ -170,19 +157,11 @@ impl Default for CommandsConfig {
 }
 
 /// Environment configuration
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct EnvironmentConfig {
     /// Additional environment variables
     pub vars: std::collections::HashMap<String, String>,
-}
-
-impl Default for EnvironmentConfig {
-    fn default() -> Self {
-        Self {
-            vars: std::collections::HashMap::new(),
-        }
-    }
 }
 
 impl Config {
@@ -214,6 +193,7 @@ impl Config {
     }
 
     /// Save the current configuration to a file
+    #[allow(dead_code)]
     pub fn save(&self, path: &Path) -> Result<()> {
         let content = toml::to_string_pretty(self)
             .context("Failed to serialize config")?;

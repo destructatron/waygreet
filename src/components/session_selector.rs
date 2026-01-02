@@ -11,12 +11,15 @@ use crate::sessions::Session;
 #[derive(Debug)]
 pub enum SessionSelectorInput {
     /// Set available sessions
+    #[allow(dead_code)]
     SetSessions(Vec<Session>),
     /// Select a session by index
     SelectByIndex(usize),
     /// Select next session
+    #[allow(dead_code)]
     SelectNext,
     /// Select previous session
+    #[allow(dead_code)]
     SelectPrevious,
 }
 
@@ -35,6 +38,7 @@ pub struct SessionSelector {
 
 impl SessionSelector {
     /// Get the currently selected session
+    #[allow(dead_code)]
     pub fn selected_session(&self) -> Option<&Session> {
         self.sessions.get(self.selected_index)
     }
