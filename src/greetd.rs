@@ -69,6 +69,7 @@ impl GreetdClient {
     }
 
     /// Cancel the current session
+    #[allow(dead_code)]
     pub async fn cancel_session(&mut self) -> Result<Response> {
         debug!("Cancelling session");
 
@@ -140,7 +141,9 @@ pub enum AuthState {
     Idle,
     /// Session created, waiting for auth
     AwaitingAuth {
+        #[allow(dead_code)]
         message_type: MessageType,
+        #[allow(dead_code)]
         message: String,
     },
     /// Authentication successful, ready to start session
@@ -148,7 +151,7 @@ pub enum AuthState {
     /// Session started
     SessionStarted,
     /// Error occurred
-    Error(String),
+    Error(#[allow(dead_code)] String),
 }
 
 /// Result of an authentication attempt
@@ -274,6 +277,7 @@ impl Authenticator {
     }
 
     /// Cancel the current authentication
+    #[allow(dead_code)]
     pub async fn cancel(&mut self) -> Result<()> {
         let _ = self.client.cancel_session().await;
         self.state = AuthState::Idle;
@@ -350,6 +354,7 @@ impl DemoAuthenticator {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub async fn cancel(&mut self) -> Result<()> {
         self.state = AuthState::Idle;
         Ok(())

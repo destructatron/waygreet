@@ -22,8 +22,10 @@ pub enum LoginFormInput {
     /// Clear the form
     Clear,
     /// Toggle password visibility
+    #[allow(dead_code)]
     TogglePasswordVisibility,
     /// Focus the username field
+    #[allow(dead_code)]
     FocusUsername,
     /// Focus the password field
     FocusPassword,

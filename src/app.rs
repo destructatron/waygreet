@@ -35,6 +35,7 @@ pub enum AppInput {
     /// greetd error
     GreetdError(String),
     /// Clear error and reset
+    #[allow(dead_code)]
     Reset,
 }
 
@@ -50,6 +51,7 @@ pub struct App {
     demo_mode: bool,
     auth: Option<AuthMode>,
     selected_session: Option<Session>,
+    #[allow(dead_code)]
     sessions: Vec<Session>,
     authenticating: bool,
     current_username: String,
@@ -162,7 +164,7 @@ impl AsyncComponent for App {
 
         let power_menu = PowerMenu::builder()
             .launch(config.commands.clone())
-            .forward(sender.input_sender(), |msg| AppInput::PowerAction(msg));
+            .forward(sender.input_sender(), AppInput::PowerAction);
 
         // Set initial session selection based on saved state
         if let Some(ref last_session) = state.last_session {

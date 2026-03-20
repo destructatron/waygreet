@@ -41,6 +41,7 @@ pub async fn start_orca(config: &AccessibilityConfig) -> Result<()> {
 }
 
 /// Start Orca via systemd user service
+#[allow(dead_code)]
 async fn start_orca_via_systemd() -> Result<()> {
     info!("Attempting to start Orca via systemd");
 
@@ -134,14 +135,13 @@ pub async fn is_orca_running() -> bool {
 /// Ensure the AT-SPI D-Bus bus is available
 async fn ensure_atspi_bus() -> Result<()> {
     // Check if at-spi-bus-launcher is available via systemd
-    if systemd::is_user_session_available().await {
-        if systemd::is_service_available("at-spi-dbus-bus.service").await {
-            if !systemd::is_service_active("at-spi-dbus-bus.service").await {
-                debug!("Starting at-spi-dbus-bus.service");
-                if let Err(e) = systemd::start_service("at-spi-dbus-bus.service").await {
-                    warn!("Failed to start AT-SPI bus service: {}", e);
-                }
-            }
+    if systemd::is_user_session_available().await
+        && systemd::is_service_available("at-spi-dbus-bus.service").await
+        && !systemd::is_service_active("at-spi-dbus-bus.service").await
+    {
+        debug!("Starting at-spi-dbus-bus.service");
+        if let Err(e) = systemd::start_service("at-spi-dbus-bus.service").await {
+            warn!("Failed to start AT-SPI bus service: {}", e);
         }
     }
 

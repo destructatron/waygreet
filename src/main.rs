@@ -14,7 +14,6 @@ mod style;
 
 use anyhow::{Context, Result};
 use clap::Parser;
-use gtk4::prelude::*;
 use relm4::RelmApp;
 use std::path::PathBuf;
 use tracing::{info, warn};
